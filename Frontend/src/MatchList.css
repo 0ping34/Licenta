@@ -1,0 +1,69 @@
+.match-list {
+  padding: 10px;
+  background-color: #f8f9fa; /* Un fundal mai deschis pentru un aspect mai aerisit */
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* O umbră mai profundă pentru un efect vizual puternic */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Spațiu mai mare între elementele listei pentru a evita aglomerația */
+}
+
+.match-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background: linear-gradient(145deg, #292d32, #232528); /* Gradient pentru un efect vizual mai dinamic */
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.match-item:hover {
+  transform: scale(1.01); /* Ușoară mărire la hover pentru a atrage atenția */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.teams {
+  font-size: 1.2rem;
+  font-weight: 600; /* Îngroșat pentru un impact vizual mai puternic */
+}
+
+.vs {
+  margin: 0 15px;
+  color: #b0b0b0; /* Culoare mai suavă pentru vs */
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.betting-options {
+  display: flex;
+  gap: 12px;
+}
+
+.bet-option {
+  background-color: #666;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px; /* Butoane extrem de rotunjite pentru un aspect modern */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.bet-option:active {
+  background-color: #1e7e34; /* Verde și mai închis când butonul este apăsat */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Adaugă o umbră interioară pentru a simula adâncimea */
+}
+
+.bet-option:focus {
+  outline: none; /* Elimină conturul implicit al browserului */
+  box-shadow: 0 0 0 3px rgba(7, 223, 36, 0.5); /* Adaugă o umbră exterioară pentru focus */
+}
+
+.bet-option.selected {
+  background-color: #28a745; /* Verde mai intens pentru a indica selecția */
+  color: white;
+  border: 1px solid #1c7430; /* Border mai închis pentru contrast */
+}
