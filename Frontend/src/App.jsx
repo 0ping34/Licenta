@@ -21,8 +21,19 @@ function App() {
   const [matches, setMatches] = useState([]);
   const [selectedInfo, setSelectedInfo] = useState([]);
   const [deletionDetails, setDeletionDetails] = useState({ key: null, mID: null, type: 'none' });
- 
+
   useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('authToken');
+    const username = localStorage.getItem('username');
+
+    if (token && username) {
+      setIsLoggedIn(true);
+      setLoggedInUsername(username);
+      // You may also want to set the userId if you stored it in localStorage
+      // setUserId(localStorage.getItem('userId'));
+    }
+
     axios.get('https://localhost:8081/events')
       .then(response => {
         setEvents(response.data);
@@ -68,12 +79,17 @@ function App() {
     setIsLoggedIn(false);
     setLoggedInUsername('');
     setUserId(null);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
+    // localStorage.removeItem('userId'); // Uncomment if you store userId
   };
 
   const handleLoginSuccess = (username, userId) => {
     setIsLoggedIn(true);
     setLoggedInUsername(username);
     setUserId(userId);
+    localStorage.setItem('username', username);
+    // localStorage.setItem('userId', userId); // Uncomment if you store userId
   };
 
   const handleEventTypeSelect = (eventType) => {
@@ -111,8 +127,6 @@ function App() {
     setSelectedInfo([]);
     setDeletionDetails({ key: null, type: 'all' });
   };
-
-  
 
   return (
     <Router>

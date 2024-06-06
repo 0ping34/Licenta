@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from './axiosConfig';
+import { useNavigate } from 'react-router-dom';
 import './AdminPage.css';
-import { useLocation } from 'react-router-dom';
 import moment from 'moment'; // Importă moment.js
 
 const AdminPage = () => {
@@ -13,18 +13,24 @@ const AdminPage = () => {
   const [location, setLocation] = useState('');
   const [betOptions, setBetOptions] = useState([{ id: Date.now(), option: '', odds: '' }]);
   const [eventTypes, setEventTypes] = useState(['Fotbal', 'Tenis', 'Baschet']);
- 
-  const locations = useLocation();
-  const username = locations.state?.username || 'Admin';
+  const [editingEvent, setEditingEvent] = useState(null);
+  
+  const navigate = useNavigate();
+  const username = localStorage.getItem('username') || 'Admin';
 
   useEffect(() => {
-    axios.get('https://localhost:8081/events')
-      .then(response => {
-        console.log(response.data); // Adaugă un console.log pentru a verifica datele primite
-        setEvents(response.data);
-      })
-      .catch(error => console.error('Error fetching events:', error));
-  }, []);
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      navigate('/'); // Redirecționează la pagina de login dacă nu este logat
+    } else {
+      axios.get('/events')
+        .then(response => {
+          console.log(response.data); // Adaugă un console.log pentru a verifica datele primite
+          setEvents(response.data);
+        })
+        .catch(error => console.error('Error fetching events:', error));
+    }
+  }, [navigate]);
 
   const handleAddBetOption = () => {
     setBetOptions([...betOptions, { id: Date.now(), option: '', odds: '' }]);
@@ -58,7 +64,7 @@ const AdminPage = () => {
       Optiuni_Pariuri: JSON.stringify({ cote: options })
     };
 
-    axios.post('https://localhost:8081/events', newEvent)
+    axios.post('/events', newEvent)
       .then(response => {
         setEvents([...events, response.data]);
         clearForm();
@@ -77,25 +83,52 @@ const AdminPage = () => {
   };
 
   const handleDeleteEvent = (id) => {
-    axios.delete(`https://localhost:8081/events/${id}`)
+    axios.delete(`/events/${id}`)
       .then(() => setEvents(events.filter(event => event.ID_Eveniment !== id)))
       .catch(error => console.error('Error deleting event:', error));
   };
 
-  const handleUpdateEvent = (id, updatedEvent) => {
-    axios.put(`https://localhost:8081/events/${id}`, updatedEvent)
-      .then(() => setEvents(events.map(event => (event.ID_Eveniment === id ? updatedEvent : event))))
+  const handleUpdateEvent = (id) => {
+    const updatedEvent = {
+      ...editingEvent,
+      Optiuni_Pariuri: JSON.stringify({ cote: editingEvent.cote })
+    };
+
+    axios.put(`/events/${id}`, updatedEvent)
+      .then(response => {
+        setEvents(events.map(event => (event.ID_Eveniment === id ? response.data : event)));
+        setEditingEvent(null);
+      })
       .catch(error => console.error('Error updating event:', error));
+      window.location.reload(false);
+  };
+
+  const startEditingEvent = (event) => {
+    setEditingEvent({
+      ...event,
+      cote: JSON.parse(event.Optiuni_Pariuri || '{}').cote || {}
+    });
+  };
+
+  const handleEditBetOptionChange = (key, value) => {
+    setEditingEvent({
+      ...editingEvent,
+      cote: {
+        ...editingEvent.cote,
+        [key]: parseFloat(value)
+      }
+    });
   };
 
   const renderBettingOptions = (parsedOptions) => {
-    return Object.entries(parsedOptions.cote).map(([option, odds], index) => (
+    return Object.entries(parsedOptions.cote).map(([option, odds]) => (
       <li key={option}><strong>{option}:</strong> {odds}</li>
     ));
   };
 
   return (
     <div className="admin-page">
+      <button className="back-button" onClick={() => navigate('/')}>Back</button>
       <h1>Bine ai venit, {username}!</h1>
       <h2>Gestionare Evenimente Sportive</h2>
 
@@ -165,9 +198,66 @@ const AdminPage = () => {
                 )}
               </ul>
               <div className="action-buttons">
-                <button className="update-btn" onClick={() => handleUpdateEvent(event.ID_Eveniment, event)}>Actualizează</button>
+                <button className="update-btn" onClick={() => startEditingEvent(event)}>Actualizează</button>
                 <button className="delete-btn" onClick={() => handleDeleteEvent(event.ID_Eveniment)}>Șterge</button>
               </div>
+
+              {editingEvent && editingEvent.ID_Eveniment === event.ID_Eveniment && (
+                <div className="edit-event-form">
+                  <h4>Editare Eveniment</h4>
+                  <select
+                    value={editingEvent.Tip_Eveniment}
+                    onChange={e => setEditingEvent({ ...editingEvent, Tip_Eveniment: e.target.value })}
+                    className="form-input"
+                  >
+                    {eventTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    value={editingEvent.Echipa_unu}
+                    onChange={e => setEditingEvent({ ...editingEvent, Echipa_unu: e.target.value })}
+                    className="form-input"
+                  />
+                  <input
+                    type="text"
+                    value={editingEvent.Echipa_doi}
+                    onChange={e => setEditingEvent({ ...editingEvent, Echipa_doi: e.target.value })}
+                    className="form-input"
+                  />
+                  <input
+                    type="datetime-local"
+                    value={moment(editingEvent.Data_Eveniment).format('YYYY-MM-DDTHH:mm')}
+                    onChange={e => setEditingEvent({ ...editingEvent, Data_Eveniment: e.target.value })}
+                    className="form-input"
+                  />
+                  <input
+                    type="text"
+                    value={editingEvent.Locatie}
+                    onChange={e => setEditingEvent({ ...editingEvent, Locatie: e.target.value })}
+                    className="form-input"
+                  />
+                  <h4>Optiuni Pariuri</h4>
+                  {Object.entries(editingEvent.cote).map(([key, value]) => (
+                    <div key={key} className="bet-option">
+                      <input
+                        type="text"
+                        value={key}
+                        readOnly
+                        className="form-input"
+                      />
+                      <input
+                        type="number"
+                        value={value}
+                        onChange={e => handleEditBetOptionChange(key, e.target.value)}
+                        className="form-input"
+                      />
+                    </div>
+                  ))}
+                  <button className="save-changes-btn" onClick={() => handleUpdateEvent(event.ID_Eveniment)}>Salvează Modificările</button>
+                </div>
+              )}
             </div>
           );
         })}

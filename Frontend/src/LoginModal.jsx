@@ -20,16 +20,19 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, onLogout }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = { email, password };
-
+  
     try {
       const response = await axios.post('https://localhost:8081/login', data);
-
+  
       if (response.status === 200) {
         console.log('Autentificare reușită!');
-        const { userId, username, role } = response.data;
+        const { userId, username, role, token } = response.data;
         
-        onLoginSuccess(username, userId); // Transmitem și userId
-        console.log(role);
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('username', username);
+        localStorage.setItem('role', role); // Stochează rolul în localStorage
+  
+        onLoginSuccess(username, userId, role); // Transmite și rolul
         if (role === 'admin') {
           navigate('/admin', { state: { username } });
         } else {
@@ -44,8 +47,10 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, onLogout }) => {
       setError('A apărut o eroare la trimiterea cererii. Vă rugăm să încercați din nou.');
     }
   };
-
+  
   const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
     onLogout(); // Informăm componenta părinte despre deconectare
     setEmail('');
     setPassword('');

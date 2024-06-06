@@ -166,3 +166,19 @@ html, body {
 .delete-btn:hover {
   background-color: #c82333;
 }
+
+.back-button {
+  align-self: flex-start;
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.back-button:hover {
+  background-color: #218838;
+}
