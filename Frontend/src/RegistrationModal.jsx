@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './RegistrationModal.css';
 
 const RegistrationModal = ({ isOpen, onClose }) => {
@@ -8,7 +8,28 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerificationChecked, setIsVerificationChecked] = useState(false);
+  const [birthDate, setBirthDate] = useState('');
   const [error, setError] = useState('');
+  const [validCodes, setValidCodes] = useState({});
+
+  useEffect(() => {
+    const fetchVerificationCodes = async () => {
+      try {
+        const response = await fetch('https://localhost:8081/coduri-verificare');
+        const data = await response.json();
+        const codes = {};
+        data.forEach(item => {
+          codes[item.Valoare] = item.Pozitie_Cod;
+        });
+        setValidCodes(codes);
+      } catch (error) {
+        console.error('Eroare la obținerea codurilor de verificare:', error);
+        setError('A apărut o eroare la obținerea codurilor de verificare.');
+      }
+    };
+
+    fetchVerificationCodes();
+  }, []);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -34,20 +55,39 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     setIsVerificationChecked(event.target.checked);
   };
 
+  const handleBirthDateChange = (event) => {
+    setBirthDate(event.target.value);
+  };
+
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDifference = today.getMonth() - birthDateObj.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObj.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (calculateAge(birthDate) < 18) {
+      setError('Trebuie să aveți cel puțin 18 ani pentru a vă înregistra.');
+      return;
+    }
 
     if (isVerificationChecked && !verificationCode) {
       setError('Codul de verificare este necesar dacă caseta este bifată.');
       return;
     }
 
-    const validCode = '123456789'; // Cod de 9 caractere pentru verificare
     let position = 'utilizator';
 
     if (isVerificationChecked) {
-      if (verificationCode === validCode) {
-        position = 'admin';
+      if (validCodes[verificationCode]) {
+        position = validCodes[verificationCode];
       } else {
         setError('Codul de verificare este incorect.');
         return;
@@ -59,6 +99,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       email,
       password,
       confirmPassword,
+      birthDate,
       position,
     };
 
@@ -115,6 +156,10 @@ const RegistrationModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirmare Parolă:</label>
                 <input type="password" id="confirmPassword" name="confirmPassword" onChange={handleConfirmPasswordChange} value={confirmPassword} />
+              </div>
+              <div className="form-group">
+                <label htmlFor="birthDate">Data Nașterii:</label>
+                <input type="date" id="birthDate" name="birthDate" onChange={handleBirthDateChange} value={birthDate} />
               </div>
               <div className="form-group">
                 <label htmlFor="verificationCodeCheck">

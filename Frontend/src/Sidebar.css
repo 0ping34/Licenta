@@ -1,0 +1,47 @@
+/* Sidebar.css */
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #2c3e50; /* Darker background for modern look */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: white; /* White text for contrast */
+}
+
+.sidebar button {
+  margin: 10px 0;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: white; /* White text for buttons */
+}
+
+.sidebar button.active {
+  background-color: #3498db; /* Blue background for active item */
+  font-weight: bold;
+  border-radius: 4px; /* Rounded corners for buttons */
+}
+
+.sidebar button:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+.sidebar-back-button {
+  margin-bottom: 20px; /* Space at the bottom */
+  color: #ecf0f1; /* Light color for back button */
+  background-color: transparent; /* Transparent background */
+  font-weight: normal; /* Normal font weight */
+  border: 1px solid #ecf0f1; /* Light border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for the back button */
+}
+
+.sidebar-back-button:hover {
+  background-color: #34495e; /* Slightly darker background on hover */
+}

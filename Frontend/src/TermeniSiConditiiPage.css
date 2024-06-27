@@ -1,0 +1,66 @@
+/* TermeniSiConditiiPage.css */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4; /* Background color for the entire page */
+}
+
+.termeni-conditii-container {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  color: #333;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  overflow-y: auto; /* Allow vertical scrolling */
+}
+
+.termeni-conditii-container h1 {
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  color: #222;
+  text-align: center;
+}
+
+.termeni-conditii-container .content {
+  max-width: 800px; /* Limit the width of the text container */
+  width: 100%;
+  text-align: left;
+}
+
+.termeni-conditii-container h2 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.termeni-conditii-container p {
+  margin-bottom: 20px;
+  line-height: 1.8;
+  font-size: 1.1em;
+  color: #555;
+}
+
+.back-button {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-start; /* Aligns the button to the left */
+  margin-bottom: 20px; /* Add some space below the button */
+}
+
+.back-button:hover {
+  background-color: #45a049;
+}

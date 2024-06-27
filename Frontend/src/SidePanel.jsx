@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 
-function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTickets, isLoggedIn, openLoginModal, userId }) {
+function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedIn, openLoginModal, userId }) {
   const [betAmounts, setBetAmounts] = useState({});
   const [profits, setProfits] = useState({});
   const [betInputs, setBetInputs] = useState({});
   const [totalBetAmount, setTotalBetAmount] = useState('');
   const [totalWinAmount, setTotalWinAmount] = useState(0);
   const [currency, setCurrency] = useState('RON');
+  const [isCombinedBet, setIsCombinedBet] = useState(false);
+  const [canCombineBets, setCanCombineBets] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,6 +22,7 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
       totalWin += total;
     });
     setTotalWinAmount(totalWin);
+    checkCombineBetsCondition();
   }, [betInputs, selectedInfo]);
 
   const handleAmountChange = (amount, index, odds) => {
@@ -34,9 +37,8 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
   const handleCurrencyChange = (newCurrency) => {
     setCurrency(newCurrency);
 
-    // Actualizează toate câmpurile de pariu cu noua monedă
     selectedInfo.forEach((info, index) => {
-      info.currency = newCurrency; // Actualizează moneda în info
+      info.currency = newCurrency;
       handleAmountChange(betInputs[index], index, info.odds);
     });
   };
@@ -47,8 +49,9 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
       return;
     }
     const betAmount = betInputs[index];
-    onAddTicket({ ...info, betAmount, currency });
-    navigate('/payment', { state: { bets: [{ ...info, betAmount, currency }], userId } });  // Redirecționare la pagina de plată cu datele biletului și userId
+    const role = localStorage.getItem('role');
+    const targetPath = role === 'angajat' ? '/payment2' : '/payment';
+    navigate(targetPath, { state: { bets: [{ ...info, betAmount, currency }], userId, isCombinedBet: false } });
   };
 
   const handleAddAllTickets = () => {
@@ -61,11 +64,14 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
       betAmount: betInputs[index],
       currency
     }));
-    navigate('/payment', { state: { bets, userId } });  // Redirecționare la pagina de plată cu toate biletele și userId
+    const role = localStorage.getItem('role');
+    const targetPath = role === 'angajat' ? '/payment2' : '/payment';
+    navigate(targetPath, { state: { bets, userId, isCombinedBet } });
   };
 
   const handleDeleteTicket = (index) => {
-    onDeleteTicket(index);
+    const betToRemove = selectedInfo[index];
+    onDeleteTicket(index, betToRemove.category);
 
     setBetInputs(prevInputs => {
       const newInputs = Object.fromEntries(
@@ -96,6 +102,7 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
 
     setTotalBetAmount('');
     setTotalWinAmount(0);
+    checkCombineBetsCondition();
   };
 
   const handleDeleteAllTickets = () => {
@@ -105,6 +112,7 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
     setProfits({});
     setTotalBetAmount('');
     setTotalWinAmount(0);
+    setCanCombineBets(false);
   };
 
   const handleTotalBetAmountChange = (e) => {
@@ -123,9 +131,58 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
     setTotalWinAmount(totalWin);
   };
 
+  const calculateCombinedOdds = () => {
+    return selectedInfo.reduce((totalOdds, info) => totalOdds * info.odds, 1);
+  };
+
+  const handleCombinedBetToggle = () => {
+    setIsCombinedBet(!isCombinedBet);
+    if (!isCombinedBet) {
+      const combinedOdds = calculateCombinedOdds();
+      let combinedWin = 0;
+      selectedInfo.forEach((info, index) => {
+        const amount = betInputs[index] || 0;
+        const total = amount * combinedOdds;
+        combinedWin += total;
+      });
+      setTotalWinAmount(combinedWin);
+    } else {
+      let totalWin = 0;
+      selectedInfo.forEach((info, index) => {
+        const amount = betInputs[index] || 0;
+        const total = amount * info.odds;
+        totalWin += total;
+      });
+      setTotalWinAmount(totalWin);
+    }
+  };
+
+  const checkCombineBetsCondition = () => {
+    const categoryMap = new Map();
+
+    selectedInfo.forEach(info => {
+      if (!categoryMap.has(info.category)) {
+        categoryMap.set(info.category, new Set());
+      }
+      categoryMap.get(info.category).add(info.ID);
+    });
+
+    let canCombine = true;
+    categoryMap.forEach((matchIds, category) => {
+      if (matchIds.size !== selectedInfo.filter(info => info.category === category).length) {
+        canCombine = false;
+      }
+    });
+
+    setCanCombineBets(selectedInfo.length > 1 && canCombine);
+  };
+
   return (
     <div className="side-panel">
       <h3 className="side-panel-title">BILETE</h3>
+      <button className="delete-all-button" onClick={handleDeleteAllTickets}>
+        Șterge toate biletele
+      </button>
       {selectedInfo.length > 0 && (
         <div className="total-bet-section">
           <div className="bet-input-group">
@@ -157,6 +214,16 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
             className="total-display"
           />
           <button onClick={handleAddAllTickets}>Adaugă toate biletele</button>
+          {canCombineBets && (
+            <label className="combined-bet-toggle">
+              <input
+                type="checkbox"
+                checked={isCombinedBet}
+                onChange={handleCombinedBetToggle}
+              />
+              Pariază combinat
+            </label>
+          )}
         </div>
       )}
       {selectedInfo.length > 0 ? (
@@ -164,14 +231,14 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
           {selectedInfo.map((info, index) => (
             <div key={index} className="ticket-info">
               <h2>Detalii Meci: {info.description}</h2>
-              <p>Opțiune selectată: {info.betKey} cu cota {info.odds}</p>
+              <p>Opțiune selectată: {info.category} - {info.betKey} cu cota {info.odds}</p>
               <div className="bet-details">
                 <div className="bet-input-group">
                   <input
                     type="number"
                     onChange={(e) => handleAmountChange(e.target.value, index, info.odds)}
                     placeholder={`Suma ${currency}`}
-                    value={betInputs[index] ? betInputs[index] : ''}  // Resetare input
+                    value={betInputs[index] ? betInputs[index] : ''}
                     className="bet-input"
                     min="0"
                     step="0.01"
@@ -203,9 +270,6 @@ function SidePanel({ selectedInfo, onAddTicket, onDeleteTicket, onDeleteAllTicke
       ) : (
         <p>Nici o selecție.</p>
       )}
-      <button className="delete-all-button" onClick={handleDeleteAllTickets} style={{ marginTop: 'auto' }}>
-        Șterge toate biletele
-      </button>
     </div>
   );
 }

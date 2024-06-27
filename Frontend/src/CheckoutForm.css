@@ -121,6 +121,27 @@
   animation: spin 1s linear infinite;
 }
 
+.bet-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.combined-bet-item {
+  background-color: #e0f7fa;
+  border: 1px solid #00acc1;
+}
+
+.checkout-form label
+{
+  color: #000;
+}
+
+.checkout-form h3
+{
+  color: #000;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);

@@ -1,18 +1,17 @@
-// AdminRedirector.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminRedirector = ({ username, resetRedirect }) => {
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (username) {
       navigate('/admin', { state: { username } });
-      resetRedirect(); // Resetează flag-ul după redirecționare
+      resetRedirect();
     }
   }, [username, navigate, resetRedirect]);
 
-  return null; // This component doesn't render anything
+  return null;
 };
 
 export default AdminRedirector;

@@ -29,15 +29,17 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, onLogout }) => {
         const { userId, username, role, token } = response.data;
         
         localStorage.setItem('authToken', token);
+        localStorage.setItem('UserID', userId);
         localStorage.setItem('username', username);
         localStorage.setItem('role', role); // Stochează rolul în localStorage
   
         onLoginSuccess(username, userId, role); // Transmite și rolul
         if (role === 'admin') {
           navigate('/admin', { state: { username } });
-        } else {
-          onClose();
+        } else if (role === 'manager') { // Add logic for manager role
+          navigate('/manager', { state: { username } });
         }
+        onClose();
       } else {
         const errorMessage = response.data.message;
         setError(errorMessage);
@@ -50,7 +52,9 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, onLogout }) => {
   
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('UserID');
     localStorage.removeItem('username');
+    localStorage.removeItem('role'); // Curăță rolul din localStorage
     onLogout(); // Informăm componenta părinte despre deconectare
     setEmail('');
     setPassword('');
