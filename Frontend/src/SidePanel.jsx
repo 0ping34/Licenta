@@ -14,6 +14,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
 
   const navigate = useNavigate();
 
+  // Recalculează suma totală a câștigurilor și verifică dacă pariurile pot fi combinate de fiecare dată când se schimbă selecțiile sau sumele pariurilor
   useEffect(() => {
     let totalWin = 0;
     selectedInfo.forEach((info, index) => {
@@ -25,6 +26,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     checkCombineBetsCondition();
   }, [betInputs, selectedInfo]);
 
+  // Gestionează schimbarea sumei unui pariu
   const handleAmountChange = (amount, index, odds) => {
     const total = amount * odds;
     setBetInputs(prevInputs => ({ ...prevInputs, [index]: amount }));
@@ -34,6 +36,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     setTotalBetAmount('');
   };
 
+  // Gestionează schimbarea monedei și recalculează sumele și câștigurile pentru fiecare pariu
   const handleCurrencyChange = (newCurrency) => {
     setCurrency(newCurrency);
 
@@ -43,6 +46,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     });
   };
 
+  // Gestionează adăugarea unui bilet individual
   const handleAddTicket = (info, index) => {
     if (!isLoggedIn) {
       openLoginModal();
@@ -54,6 +58,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     navigate(targetPath, { state: { bets: [{ ...info, betAmount, currency }], userId, isCombinedBet: false } });
   };
 
+  // Gestionează adăugarea tuturor biletelor
   const handleAddAllTickets = () => {
     if (!isLoggedIn) {
       openLoginModal();
@@ -69,6 +74,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     navigate(targetPath, { state: { bets, userId, isCombinedBet } });
   };
 
+  // Gestionează ștergerea unui bilet individual și actualizează sumele și câștigurile
   const handleDeleteTicket = (index) => {
     const betToRemove = selectedInfo[index];
     onDeleteTicket(index, betToRemove.category);
@@ -105,6 +111,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     checkCombineBetsCondition();
   };
 
+  // Gestionează ștergerea tuturor biletelor
   const handleDeleteAllTickets = () => {
     onDeleteAllTickets();
     setBetInputs({});
@@ -115,6 +122,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     setCanCombineBets(false);
   };
 
+  // Gestionează schimbarea sumei totale a pariurilor și actualizează sumele și câștigurile pentru fiecare pariu
   const handleTotalBetAmountChange = (e) => {
     const amount = e.target.value;
     setTotalBetAmount(amount);
@@ -131,10 +139,12 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     setTotalWinAmount(totalWin);
   };
 
+  // Calculează cota combinată pentru toate pariurile selectate
   const calculateCombinedOdds = () => {
     return selectedInfo.reduce((totalOdds, info) => totalOdds * info.odds, 1);
   };
 
+  // Gestionează comutarea stării de pariu combinat și recalculează suma câștigurilor
   const handleCombinedBetToggle = () => {
     setIsCombinedBet(!isCombinedBet);
     if (!isCombinedBet) {
@@ -157,6 +167,7 @@ function SidePanel({ selectedInfo, onDeleteTicket, onDeleteAllTickets, isLoggedI
     }
   };
 
+  // Verifică dacă pariurile pot fi combinate
   const checkCombineBetsCondition = () => {
     const categoryMap = new Map();
 

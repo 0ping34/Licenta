@@ -90,3 +90,8 @@ button:hover {
   color: red;
   margin-top: 10px;
 }
+
+.success-message
+{
+  color: white;
+}

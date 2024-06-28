@@ -11,16 +11,16 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10; // Numărul de rounds pentru generarea salt-ului
 const app = express();
 require('./cronJob.js');
-const { sendConfirmationEmail } = require('./emailService'); // Correct import
-const { sendTicketCreationEmail } = require('./emailService'); // Adjust the path to your emailService.js
-const { sendRefundEmail, sendWithdrawEmail } = require('./emailService');
+const { sendConfirmationEmail, sendTicketCreationEmail, sendRefundEmail, sendWithdrawEmail } = require('./emailService');
 
+// Configurare CORS pentru a permite accesul doar de pe frontend-ul specificat
 app.use(cors({
     origin: 'https://localhost:5173', // Înlocuiește cu portul frontend-ului tău
     credentials: true
 }));
 app.use(express.json()); // Middleware pentru a interpreta corpul cererii ca JSON
 
+// Configurarea conexiunii la baza de date
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'ADMIN',
@@ -28,6 +28,7 @@ const connection = mysql.createConnection({
     database: 'casa_de_pariuri'
 });
 
+// Verificarea conexiunii la baza de date
 app.get('/', (req, res) => {
     connection.ping((error) => {
         if (error) {
@@ -53,6 +54,7 @@ app.get('/utilizatori/exista/:username/:email', (req, res) => {
     });
 });
 
+// Obține codurile de verificare din baza de date
 app.get('/coduri-verificare', (req, res) => {
   const query = 'SELECT * FROM coduri_rol';
   
@@ -66,6 +68,7 @@ app.get('/coduri-verificare', (req, res) => {
   });
 });
 
+// Înregistrare utilizator
 app.post('/inregistrare', async (req, res) => {
   const { username, email, password, confirmPassword, birthDate, position } = req.body;
 
@@ -84,29 +87,39 @@ app.post('/inregistrare', async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO utilizatori (ID_Utilizator, Nume_Utilizator, Parola_Hash, Email, Varsta, Pozitie, Data_Inregistrare, Confirmare) VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)';
     const randomNumbers = Math.floor(Math.random() * 1000000000);
-    connection.query(query, [randomNumbers, username, hashedPassword, email, age, position], (error, results) => {
+
+    // Trimiterea emailului de confirmare
+    sendConfirmationEmail(email, username, randomNumbers, async (error, info) => {
       if (error) {
-        console.error('Eroare la înregistrare:', error);
-        res.status(500).json({ status: 'error', message: 'Eroare la înregistrare' });
-        return;
+        console.error('Error sending confirmation email:', error);
+        res.status(500).json({ status: 'error', message: 'Eroare la trimiterea emailului de confirmare' });
+      } else {
+        console.log('Confirmation email sent:', info.response);
+
+        // Dacă emailul este trimis cu succes, înregistrează utilizatorul
+        const query = 'INSERT INTO utilizatori (ID_Utilizator, Nume_Utilizator, Parola_Hash, Email, Varsta, Pozitie, Data_Inregistrare, Confirmare) VALUES (?, ?, ?, ?, ?, ?, NOW(), 0)';
+        connection.query(query, [randomNumbers, username, hashedPassword, email, age, position], (error, results) => {
+          if (error) {
+            console.error('Eroare la înregistrare:', error);
+            res.status(500).json({ status: 'error', message: 'Eroare la înregistrare' });
+            return;
+          }
+
+          const counterQuery = 'INSERT INTO counter (Counter, Currency, ID_Utilizator) VALUES (?, ?, ?)';
+          const counterValues = [0, 'RON', randomNumbers];
+          connection.query(counterQuery, counterValues, (counterError, counterResults) => {
+            if (counterError) {
+              console.error('Eroare la inserarea în tabela counter:', counterError);
+              res.status(500).json({ status: 'error', message: 'Eroare la inserarea în tabela counter' });
+              return;
+            }
+
+            console.log('Utilizator înregistrat cu succes!');
+            res.status(200).json({ status: 'success', message: 'Utilizator înregistrat cu succes. Vă rugăm să verificați emailul pentru confirmare.' });
+          });
+        });
       }
-
-      const counterQuery = 'INSERT INTO counter (Counter, Currency, ID_Utilizator) VALUES (?, ?, ?)';
-      const counterValues = [0, 'RON', randomNumbers];
-      connection.query(counterQuery, counterValues, (counterError, counterResults) => {
-        if (counterError) {
-          console.error('Eroare la inserarea în tabela counter:', counterError);
-          res.status(500).json({ status: 'error', message: 'Eroare la inserarea în tabela counter' });
-          return;
-        }
-
-        sendConfirmationEmail(email, username, randomNumbers); // Call the function to send confirmation email
-
-        console.log('Utilizator înregistrat cu succes!');
-        res.status(200).json({ status: 'success', message: 'Utilizator înregistrat cu succes. Vă rugăm să verificați emailul pentru confirmare.' });
-      });
     });
   } catch (error) {
     console.error('Eroare la hash-uirea parolei:', error);
@@ -114,6 +127,7 @@ app.post('/inregistrare', async (req, res) => {
   }
 });
 
+// Login utilizator
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
 
@@ -146,7 +160,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Confirmation route
+// Confirmare email
 app.get('/confirm', (req, res) => {
   const { userId } = req.query;
 
@@ -162,6 +176,7 @@ app.get('/confirm', (req, res) => {
   });
 });
 
+// Verificare status de confirmare
 app.get('/confirm-status/:userId', (req, res) => {
   const { userId } = req.params;
 
@@ -183,10 +198,11 @@ app.get('/confirm-status/:userId', (req, res) => {
   });
 });
 
+// Retrimitere email de confirmare
 app.post('/resend-confirmation-email', (req, res) => {
   const { userId } = req.body;
 
-  // Get the user's email and username from the database
+  // Obține emailul și username-ul utilizatorului din baza de date
   const query = 'SELECT Email, Nume_Utilizator FROM utilizatori WHERE ID_Utilizator = ?';
   connection.query(query, [userId], (error, results) => {
     if (error) {
@@ -201,12 +217,13 @@ app.post('/resend-confirmation-email', (req, res) => {
     const userEmail = results[0].Email;
     const username = results[0].Nume_Utilizator;
 
-    // Resend the confirmation email
+    // Retrimiterea emailului de confirmare
     sendConfirmationEmail(userEmail, username);
     res.status(200).json({ status: 'success', message: 'Confirmation email resent successfully' });
   });
 });
 
+// Obține username-ul utilizatorului pe baza emailului
 app.get('/user/username/:email', (req, res) => {
     const { email } = req.params;
     
@@ -359,14 +376,14 @@ app.patch('/users/id/:userId', (req, res) => {
 app.delete('/users/id/:userId', (req, res) => {
     const { userId } = req.params;
   
-    // Begin a transaction to ensure all operations complete successfully
+    // Începe o tranzacție pentru a asigura că toate operațiile se finalizează cu succes
     connection.beginTransaction((transactionErr) => {
       if (transactionErr) {
         console.error('Error starting transaction:', transactionErr);
         return res.status(500).json({ error: 'Error starting transaction' });
       }
   
-      // Delete data from the `facturare` table
+      // Șterge datele din tabelul `facturare`
       const deleteFacturareQuery = 'DELETE FROM facturare WHERE ID_Utilizator = ?';
       connection.query(deleteFacturareQuery, [userId], (facturareErr, facturareResults) => {
         if (facturareErr) {
@@ -376,7 +393,7 @@ app.delete('/users/id/:userId', (req, res) => {
           });
         }
   
-        // Delete data from the `counter` table
+        // Șterge datele din tabelul `counter`
         const deleteCounterQuery = 'DELETE FROM counter WHERE ID_Utilizator = ?';
         connection.query(deleteCounterQuery, [userId], (counterErr, counterResults) => {
           if (counterErr) {
@@ -386,7 +403,7 @@ app.delete('/users/id/:userId', (req, res) => {
             });
           }
   
-          // Delete data from the `transactions` table
+          // Șterge datele din tabelul `tranzactie`
           const deleteTransactionsQuery = 'DELETE FROM tranzactie WHERE ID_Utilizator = ?';
           connection.query(deleteTransactionsQuery, [userId], (transactionsErr, transactionsResults) => {
             if (transactionsErr) {
@@ -396,7 +413,7 @@ app.delete('/users/id/:userId', (req, res) => {
               });
             }
   
-            // Finally, delete the user profile
+            // În cele din urmă, șterge profilul utilizatorului
             const deleteUserQuery = 'DELETE FROM utilizatori WHERE ID_Utilizator = ?';
             connection.query(deleteUserQuery, [userId], (userErr, userResults) => {
               if (userErr) {
@@ -429,6 +446,7 @@ app.delete('/users/id/:userId', (req, res) => {
     });
   });
   
+// Obține rolul utilizatorului
 app.get('/user-role', (req, res) => {
     const { username } = req.query;
     const query = 'SELECT Pozitie FROM utilizatori WHERE Nume_Utilizator = ?';
@@ -444,6 +462,7 @@ app.get('/user-role', (req, res) => {
     });
 });
 
+// Mută un meci în istoric
 app.post('/move-to-history', (req, res) => {
     const { matchId, winningOptions } = req.body;
     const query = 'SELECT * FROM eveniment_sportiv WHERE ID_Eveniment = ?';
@@ -514,6 +533,7 @@ app.delete('/match-history/:id', (req, res) => {
     });
 });
 
+// Obține toate pariurile unui utilizator
 app.get('/users/:username/bets', (req, res) => {
     const { username } = req.params;
     const queryUserId = 'SELECT ID_Utilizator FROM utilizatori WHERE Nume_Utilizator = ?';
@@ -549,6 +569,7 @@ app.get('/users/:username/bets', (req, res) => {
     });
 });
 
+// Colectează un pariu
 app.patch('/bets/:betId/collect', (req, res) => {
     const { betId } = req.params;
     const query = 'UPDATE pariu SET Colectat = 1 WHERE ID_Pariu = ?';
@@ -590,7 +611,6 @@ app.post('/events', (req, res) => {
     });
 });
 
-
 // Read
 app.get('/events', (req, res) => {
     const query = 'SELECT * FROM eveniment_sportiv';
@@ -631,6 +651,7 @@ app.delete('/events/:id', (req, res) => {
     });
 });
 
+// Obține evenimentele pe baza tipului
 app.get('/events/by-type', (req, res) => {
     const { type } = req.query;
     const query = "SELECT * FROM eveniment_sportiv WHERE Tip_Eveniment = ?";
@@ -654,6 +675,7 @@ app.get('/events/by-type', (req, res) => {
     });
 });
 
+// Obține token-ul de acces PayPal
 async function getPayPalAccessToken() {
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
@@ -677,6 +699,7 @@ async function getPayPalAccessToken() {
     }
   }
 
+// Obține counter-ul utilizatorului
 app.get('/counter/:userId', (req, res) => {
     const userId = req.params.userId;
     const query = 'SELECT Counter, Currency FROM counter WHERE ID_Utilizator = ? LIMIT 1';
@@ -692,6 +715,7 @@ app.get('/counter/:userId', (req, res) => {
     });
 });
   
+// Actualizează counter-ul utilizatorului
 app.put('/counter/:userId', (req, res) => {
     const { userId } = req.params;
     const { Counter, Currency } = req.body;
@@ -704,9 +728,10 @@ app.put('/counter/:userId', (req, res) => {
       }
       res.status(200).json({ status: 'success', message: 'Counter updated successfully' });
     });
-  });
+});
     
-  app.post('/add-ticket', async (req, res) => {
+// Adaugă un bilet (tranzacție) și verifică detaliile de plată cu PayPal
+app.post('/add-ticket', async (req, res) => {
     const { description, betKey, odds, ID, category, betAmounts, totalAmount, userId, currency, orderId, isCombinedBet } = req.body;
 
     try {
@@ -813,7 +838,7 @@ app.put('/counter/:userId', (req, res) => {
     }
 });
 
-
+// Adaugă un bilet (tranzacție) fără verificare PayPal
 app.post('/add-ticket2', (req, res) => {
   const { description, betKey, odds, ID, category, betAmounts, totalAmount, userId, currency, isCombinedBet, nume, email, adresa, oras, codPostal } = req.body;
 
@@ -913,6 +938,7 @@ app.post('/add-ticket2', (req, res) => {
   }
 });
 
+// Procesare retragere
 app.post('/withdraw', async (req, res) => {
     const { betId, userId, amount, currency } = req.body;
     const EXCHANGE_RATES = {
@@ -1013,7 +1039,7 @@ app.post('/withdraw', async (req, res) => {
     }
 });
 
-// Withdraw endpoint
+// Procesare retragere fără PayPal
 app.post('/withdraw2', async (req, res) => {
   const { betId, userId, amount, currency } = req.body;
   const EXCHANGE_RATES = {
@@ -1067,6 +1093,22 @@ app.post('/withdraw2', async (req, res) => {
         const withdrawDetails = `Bet ID: ${betId}, Amount: ${amount}, Currency: ${currency}`;
         sendWithdrawEmail(email, withdrawDetails);
 
+           // Log the operation if the user is an employee
+           if (role === 'angajat') {
+            axios.post('https://localhost:8081/log-operation', {
+              username,
+              role,
+              operation: 'withdraw',
+              table: 'pariu'
+            })
+            .then(response => {
+              console.log('Operation logged successfully:', response.data);
+            })
+            .catch(error => {
+              console.error('Error logging operation:', error.response ? error.response.data : error.message);
+            });
+          }
+
         res.status(200).json({ status: 'success', message: 'Payout successful and counter updated' });
       });
     });
@@ -1077,6 +1119,7 @@ app.post('/withdraw2', async (req, res) => {
   }
 });
  
+// Procesare refund
 app.post('/refund', async (req, res) => {
   const { betId, userId, amount, currency } = req.body;
   const EXCHANGE_RATE_RON_TO_EUR = 4.98;
@@ -1145,7 +1188,7 @@ app.post('/refund', async (req, res) => {
   }
 });
 
-// Refund endpoint
+// Procesare refund fără PayPal
 app.post('/refund2', async (req, res) => {
   const { betId, userId, amount, currency } = req.body;
   const EXCHANGE_RATES = {
@@ -1196,6 +1239,22 @@ app.post('/refund2', async (req, res) => {
         const refundDetails = `Bet ID: ${betId}, Amount: ${amount}, Currency: ${currency}`;
         sendRefundEmail(email, refundDetails);
 
+         // Log the operation if the user is an employee
+         if (role === 'angajat') {
+          axios.post('https://localhost:8081/log-operation', {
+            username,
+            role,
+            operation: 'refund',
+            table: 'pariu'
+          })
+          .then(response => {
+            console.log('Operation logged successfully:', response.data);
+          })
+          .catch(error => {
+            console.error('Error logging operation:', error.response ? error.response.data : error.message);
+          });
+        }
+
         res.status(200).json({ status: 'success', message: 'Refund and deletion successful' });
       });
     });
@@ -1205,6 +1264,7 @@ app.post('/refund2', async (req, res) => {
   }
 });
 
+// Șterge un pariu și tranzacția asociată
 app.delete('/delete-bet/:betId/:transactionId', (req, res) => {
     const { betId, transactionId } = req.params;
   
@@ -1220,7 +1280,8 @@ app.delete('/delete-bet/:betId/:transactionId', (req, res) => {
       });
   });
     
-  app.post('/log-operation', (req, res) => {
+// Logare operațiuni utilizator
+app.post('/log-operation', (req, res) => {
     const { username, role, operation, table } = req.body;
     
     const query = 'INSERT INTO operati (Nume, Pozitie, Operatie, Tabela, Data) VALUES (?, ?, ?, ?, NOW())';
@@ -1232,9 +1293,9 @@ app.delete('/delete-bet/:betId/:transactionId', (req, res) => {
         res.status(200).json({ status: 'success', message: 'Operation logged successfully' });
       }
     });
-  });
+});
 
-  // Endpoint to get all logged operations
+// Obține toate operațiunile logate
 app.get('/logged-operations', (req, res) => {
   const query = 'SELECT * FROM operati';
   connection.query(query, (error, results) => {
@@ -1247,7 +1308,7 @@ app.get('/logged-operations', (req, res) => {
   });
 });
 
-// Endpoint to get all users with the role of 'admin'
+// Obține toți utilizatorii cu rolul de 'admin'
 app.get('/admin-users', (req, res) => {
   const query = 'SELECT * FROM utilizatori WHERE Pozitie = ?';
   connection.query(query, ['admin'], (error, results) => {
@@ -1260,7 +1321,20 @@ app.get('/admin-users', (req, res) => {
   });
 });
 
-// Endpoint to get all transactions and bets
+// Obține toți utilizatorii cu rolul de 'angajat'
+app.get('/employee-users', (req, res) => {
+  const query = 'SELECT * FROM utilizatori WHERE Pozitie = ?';
+  connection.query(query, ['angajat'], (error, results) => {
+    if (error) {
+      console.error('Error fetching employee users:', error);
+      res.status(500).json({ status: 'error', message: 'Error fetching employee users' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
+// Obține toate tranzacțiile și pariurile
 app.get('/all-bets', (req, res) => {
   const queryAllBets = `
   SELECT t.ID_Tranzactie, t.Data_Tranzactie, t.Suma_Totala, t.Currency, t.ID_Utilizator, 
@@ -1280,7 +1354,7 @@ app.get('/all-bets', (req, res) => {
   });
 });
 
-// Endpoint to get all records from the facturare table
+// Obține toate înregistrările din tabelul facturare
 app.get('/invoices', (req, res) => {
   const queryAllInvoices = 'SELECT * FROM facturare';
 
@@ -1295,11 +1369,42 @@ app.get('/invoices', (req, res) => {
   });
 });
 
+// Configurare HTTPS
 const options = {
-    key: fs.readFileSync(path.join('localhost-key.pem')),
-    cert: fs.readFileSync(path.join('localhost.pem'))
+  key: fs.readFileSync(path.join('localhost-key.pem')),
+  cert: fs.readFileSync(path.join('localhost.pem'))
 };
 
-https.createServer(options, app).listen(8081, () => {
-    console.log('Serverul HTTPS a pornit pe portul 8081');
+const server = https.createServer(options, app);
+
+// Funcție pentru închiderea conexiunii la baza de date
+function closeDatabaseConnection() {
+  return new Promise((resolve, reject) => {
+    connection.end(err => {
+      if (err) {
+        console.error('Eroare la închiderea conexiunii la baza de date:', err);
+        reject(err);
+      } else {
+        console.log('Conexiunea la baza de date a fost închisă.');
+        resolve();
+      }
+    });
+  });
+}
+
+// Funcție pentru închiderea serverului
+function closeServer() {
+  return new Promise((resolve, reject) => {
+    server.close((err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+// Pornirea serverului pe portul 8081
+server.listen(8081, () => {
+  console.log('Serverul HTTPS a pornit pe portul 8081');
 });
+
+module.exports = { app, server, closeDatabaseConnection, closeServer };

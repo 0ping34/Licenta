@@ -9,34 +9,39 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, onLogout }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Funcție pentru a gestiona schimbarea valorii email-ului
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
 
+  // Funcție pentru a gestiona schimbarea valorii parolei
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
+  // Funcție pentru a gestiona trimiterea formularului de autentificare
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = { email, password };
-  
+
     try {
       const response = await axios.post('https://localhost:8081/login', data);
-  
+
       if (response.status === 200) {
         console.log('Autentificare reușită!');
         const { userId, username, role, token } = response.data;
-        
+
         localStorage.setItem('authToken', token);
         localStorage.setItem('UserID', userId);
         localStorage.setItem('username', username);
         localStorage.setItem('role', role); // Stochează rolul în localStorage
-  
+
         onLoginSuccess(username, userId, role); // Transmite și rolul
+
+        // Navigare în funcție de rol
         if (role === 'admin') {
           navigate('/admin', { state: { username } });
-        } else if (role === 'manager') { // Add logic for manager role
+        } else if (role === 'manager') { // Logică pentru rolul de manager
           navigate('/manager', { state: { username } });
         }
         onClose();
@@ -49,7 +54,8 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, onLogout }) => {
       setError('A apărut o eroare la trimiterea cererii. Vă rugăm să încercați din nou.');
     }
   };
-  
+
+  // Funcție pentru a gestiona deconectarea utilizatorului
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('UserID');

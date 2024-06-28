@@ -1,0 +1,125 @@
+/* Global styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #eceff1;
+}
+
+/* Profil page container */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  height: 100vh;
+  background-image: url('../assets/background4.webp'); /* Adăugați calea corectă pentru imaginea de fundal */
+  background-size: cover;
+  background-position: center;
+}
+
+/* Profile card */
+.profile-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+}
+
+.profile-card h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+  text-align: center;
+}
+
+.profile-details p {
+  margin: 10px 0;
+  font-size: 18px;
+  color: #666;
+}
+
+.profile-details .form-group {
+  margin-bottom: 15px;
+}
+
+.profile-details .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.profile-details .form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.save-btn:hover,
+.edit-btn:hover {
+  opacity: 0.9;
+}
+
+.back-button {
+  align-self: flex-start;
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.back-button:hover {
+  background-color: #218838;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.delete-btn:hover {
+  opacity: 0.9;
+}
+
+.resend-btn {
+  background-color: #ffC107;
+  color: #ffffff;
+}
+
+.resend-btn:hover {
+  opacity: 0.9;
+}

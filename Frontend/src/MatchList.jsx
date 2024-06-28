@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './MatchList.css';
 import { safeParseJSON } from './utils';
 
+// Definirea categoriilor de pariuri disponibile pentru fiecare tip de eveniment
 const betCategories = {
     Fotbal: ['Rezultat Final', 'Sansa Dubla', 'Total Goluri'],
     Tenis: ['Castigator Meci', 'Set 3 Total Game-uri', 'Total Game-uri'],
     Baschet: ['Rezultat Final', 'Handicap Puncte', 'Total Puncte'],
 };
 
+// Definirea numărului de opțiuni pe rând pentru fiecare categorie de pariu
 const optionsPerRow = {
     'Rezultat Final': 3,
     'Sansa Dubla': 3,
@@ -26,10 +28,12 @@ function MatchList({ matches, onSelection, deletionDetails }) {
     const [filteredMatches, setFilteredMatches] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
 
+    // Filtrează meciurile în funcție de categorie și data evenimentului
     useEffect(() => {
         filterMatches();
     }, [matches, selectedCategory]);
 
+    // Setează categoria inițială de pariu în funcție de tipul de eveniment al primului meci
     useEffect(() => {
         if (matches.length > 0) {
             const initialCategory = betCategories[matches[0].Tip_Eveniment][0];
@@ -48,6 +52,7 @@ function MatchList({ matches, onSelection, deletionDetails }) {
         setFilteredMatches(categoryMatches);
     };
 
+    // Gestionează ștergerea unui pariu selectat
     useEffect(() => {
         if (deletionDetails.type === 'single' && deletionDetails.key && deletionDetails.ID && deletionDetails.category) {
             setSelectedBets(prevBets => {
@@ -109,9 +114,9 @@ function MatchList({ matches, onSelection, deletionDetails }) {
 
     const handleMatchClick = (matchId) => {
         if (expandedMatchId === matchId) {
-            setExpandedMatchId(null); // Collapse if already expanded
+            setExpandedMatchId(null); // Colapsează dacă este deja extins
         } else {
-            setExpandedMatchId(matchId); // Expand the clicked match
+            setExpandedMatchId(matchId); // Extinde meciul clicat
         }
     };
 

@@ -1,0 +1,319 @@
+/* Global styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #eceff1;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Admin page container */
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-image: url('../assets/background.webp');
+  background-size: cover
+}
+
+/* Admin page headers */
+.admin-page h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #fffbfb;
+}
+
+.admin-page h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #fffffd;
+}
+
+/* Create event form */
+.create-event-form {
+  width: 100%;
+  max-width: 700px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.create-event-form h3 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #37474f;
+  text-align: center;
+}
+
+/* Form input fields */
+.form-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #b0bec5;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #37474f;
+  font-size: 16px;
+}
+
+.form-input::placeholder {
+  color: #90a4ae;
+}
+
+/* Betting categories */
+.bet-categories {
+  margin-bottom: 20px;
+}
+
+.category-section {
+  margin-bottom: 20px;
+  border: 1px solid #cfd8dc;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f1f8e9;
+}
+
+.category-section h4 {
+  margin-bottom: 10px;
+  color: #455a64;
+}
+
+/* Betting options */
+.bet-option {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.bet-option .form-input {
+  margin-right: 10px;
+  background-color: #ffffff;
+  color: #37474f;
+}
+
+.add-option-btn, .remove-category-btn, .add-category-btn, .create-event-btn, .save-changes-btn, .remove-option-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #388e3c;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.add-option-btn:hover, .remove-category-btn:hover, .add-category-btn:hover, .create-event-btn:hover, .save-changes-btn:hover, .remove-option-btn:hover {
+  background-color: #2e7d32;
+}
+
+/* Event list */
+.event-list {
+  width: 100%;
+  max-width: 700px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.event-list h3 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #37474f;
+  text-align: center;
+}
+
+.event-item {
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #cfd8dc;
+  border-radius: 5px;
+  background-color: #ffffff;
+}
+
+.event-item p {
+  margin: 5px 0;
+  color: #455a64;
+}
+
+.event-item ul {
+  list-style-type: none;
+  padding-left: 0;
+  color: #37474f;
+}
+
+.event-item ul li {
+  margin: 5px 0;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.update-btn, .delete-btn {
+  font-size: 14px;
+  padding: 10px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-btn {
+  background-color: #039be5;
+  color: #ffffff;
+}
+
+.update-btn:hover {
+  background-color: #0288d1;
+}
+
+.delete-btn {
+  background-color: #d32f2f;
+  color: #ffffff;
+}
+
+.delete-btn:hover {
+  background-color: #c62828;
+}
+
+/* Back button */
+.back-button {
+  margin: 10px;
+  padding: 12px 25px;
+  background-color: #388e3c;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.back-button:hover {
+  background-color: #2e7d32;
+}
+
+/* Edit event form */
+.edit-event-form {
+  background-color: #f1f8e9;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.edit-event-form .form-input {
+  margin-bottom: 10px;
+}
+
+.save-changes-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #0288d1;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.save-changes-btn:hover {
+  background-color: #0277bd;
+}
+
+.remove-category-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #d32f2f;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.remove-category-btn:hover {
+  background-color: #c62828;
+}
+
+.remove-option-btn {
+  background-color: #d32f2f;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.remove-option-btn:hover {
+  background-color: #c62828;
+}
+
+/* Category and options styles */
+h5 {
+  color: #37474f;
+}
+
+/* Filter section */
+.filter-section {
+  width: 100%;
+  max-width: 700px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.filter-section h3 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #37474f;
+  text-align: center;
+}
+
+.filter-section .form-input {
+  margin-bottom: 10px;
+}
+
+/* Historical link */
+.historical-link {
+  margin: 20px 0;
+}
+
+/* Button container */
+.button-container {
+  align-self: start;
+  display: flex;
+  align-items: start; /* Center items vertically */
+  margin-bottom: 20px; /* Add some space below the buttons */
+} 
+
+.historical-link a {
+  color: #066392;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.historical-link a:hover {
+  text-decoration: underline;
+}

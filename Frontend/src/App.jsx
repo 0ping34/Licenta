@@ -5,20 +5,21 @@ import RegistrationModal from './RegistrationModal';
 import LoginModal from './LoginModal';
 import MatchList from './MatchList';
 import SidePanel from './SidePanel';
-import PaymentPage from './PaymentPage';
-import PaymentPage2 from './PaymentPage2';
-import AdminPage from './AdminPage';
-import AdminRedirector from './AdminRedirector';
-import ProfilRedirector from './ProfilRedirector';
-import ProfilPage from './ProfilPage';
-import IstoricRedirector from './IstoricRedirector';
-import BetHistoryRedirector from './BetHistoryRedirector';
-import IstoricMeciuriPage from './IstoricMeciuriPage';
-import IstoricPariuriPage from './IstoricPariuriPage';
-import ManagerRedirector from './ManagerRedirector'; // Import ManagerRedirector
-import ManagerPage from './ManagerPage'; // Import ManagerPage
-import Footer from './Footer'; // Importăm componenta Footer
-import TermeniSiConditiiPage from './TermeniSiConditiiPage'; // Importăm componenta TermeniSiConditiiPage
+import PaymentPage from './Pariere/PaymentPage';
+import PaymentPage2 from './Pariere/PaymentPage2';
+import AdminPage from './Admin/AdminPage';
+import AdminRedirector from './Admin/AdminRedirector';
+import ProfilRedirector from './Pagini/ProfilRedirector';
+import ProfilPage from './Pagini/ProfilPage';
+import IstoricRedirector from './Pagini/IstoricRedirector';
+import BetHistoryRedirector from './Pagini/BetHistoryRedirector';
+import IstoricMeciuriPage from './Pagini/IstoricMeciuriPage';
+import IstoricPariuriPage from './Pagini/IstoricPariuriPage';
+import ManagerRedirector from './Manager/ManagerRedirector'; // Import ManagerRedirector
+import ManagerPage from './Manager/ManagerPage'; // Import ManagerPage
+import Footer from './Pagini/Footer'; // Importăm componenta Footer
+import TermeniSiConditiiPage from './Pagini/TermeniSiConditiiPage'; // Importăm componenta TermeniSiConditiiPage
+import ConfirmEmailPage from './ConfirmEmailPage';
 import './App.css';
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
   const [redirectToManager, setRedirectToManager] = useState(false); // Add state for manager redirect
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // Utilizare efect pentru a verifica autentificarea și a încărca evenimentele
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const username = localStorage.getItem('username');
@@ -66,6 +68,7 @@ function App() {
       });
   }, []);
 
+  // Utilizare efect pentru a încărca meciurile în funcție de tipul evenimentului selectat
   useEffect(() => {
     if (selectedEventType) {
       axios.get(`https://localhost:8081/events/by-type?type=${encodeURIComponent(selectedEventType)}`)
@@ -78,6 +81,7 @@ function App() {
     }
   }, [selectedEventType]);
 
+  // Utilizare efect pentru a verifica conexiunea la server
   useEffect(() => {
     axios.get('https://localhost:8081/')
       .then(response => {
@@ -191,7 +195,7 @@ function App() {
         <Route path="/" element={
           <div className="App">
             <header className="Navbar">
-            <div className="LeftNavbarItems">
+              <div className="LeftNavbarItems">
                 <span className="alphas" onClick={() => window.location.reload()} style={{ cursor: 'pointer' }}>
                   ALPHAS.
                 </span>
@@ -262,8 +266,9 @@ function App() {
             <Footer /> 
           </div>
         } />
+        <Route path="/confirm" element={<ConfirmEmailPage />} />
         <Route path="/payment" element={<PaymentPage />} />
-        <Route path="/payment2" element={<PaymentPage2/>} />
+        <Route path="/payment2" element={<PaymentPage2 />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/manager" element={<ManagerPage />} /> {/* Add route for manager page */}
         <Route path="/profile" element={

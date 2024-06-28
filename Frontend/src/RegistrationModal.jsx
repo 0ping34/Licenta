@@ -10,8 +10,10 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   const [isVerificationChecked, setIsVerificationChecked] = useState(false);
   const [birthDate, setBirthDate] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(''); // Stare pentru mesajul de succes
   const [validCodes, setValidCodes] = useState({});
 
+  // Utilizare useEffect pentru a obține codurile de verificare din backend
   useEffect(() => {
     const fetchVerificationCodes = async () => {
       try {
@@ -31,6 +33,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     fetchVerificationCodes();
   }, []);
 
+  // Funcțiile pentru gestionarea schimbării inputurilor
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -59,6 +62,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     setBirthDate(event.target.value);
   };
 
+  // Funcție pentru calcularea vârstei utilizatorului
   const calculateAge = (birthDate) => {
     const today = new Date();
     const birthDateObj = new Date(birthDate);
@@ -70,6 +74,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     return age;
   };
 
+  // Funcția pentru gestionarea trimiterii formularului
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -121,8 +126,12 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       });
 
       if (response.ok) {
-        console.log('Utilizator înregistrat cu succes!');
-        onClose();
+        setError('');
+        setSuccess('Contul a fost creat cu succes! Vă rugăm să verificați emailul pentru confirmarea acestuia.');
+        setTimeout(() => {
+          setSuccess('');
+          onClose();
+        }, 5000);
       } else {
         const errorMessage = await response.text();
         setError(errorMessage);
@@ -186,6 +195,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
               )}
               <button type="submit">Înregistrare</button>
               {error && <p className="error-message">{error}</p>}
+              {success && <p className="success-message">{success}</p>}
             </form>
           </div>
         </div>

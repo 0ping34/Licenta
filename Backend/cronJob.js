@@ -18,20 +18,27 @@ connection.connect((err) => {
   console.log('Connected to the database');
 });
 
-// Configurarea și pornirea sarcinii cron
+// Configurarea și pornirea sarcinii cron pentru curățarea datelor vechi
 cron.schedule('0 0 * * *', () => {
-  const query = 'DELETE FROM facturare WHERE Data_Facturare < NOW() - INTERVAL 30 DAY';
+  const cleanupQuery = `
+    DELETE FROM facturare WHERE Data_Facturare < DATE_SUB(NOW(), INTERVAL 30 DAY);
+    DELETE FROM operati WHERE Data < DATE_SUB(NOW(), INTERVAL 30 DAY);
+    DELETE FROM tranzactie WHERE Data_Tranzactie < DATE_SUB(NOW(), INTERVAL 30 DAY);
+    DELETE FROM meci2 WHERE Data_Eveniment < DATE_SUB(NOW(), INTERVAL 30 DAY);
+  `;
 
-  connection.query(query, (error, results) => {
+  connection.query(cleanupQuery, (error, results) => {
     if (error) {
       console.error('Error executing query:', error);
       return;
     }
-    console.log('Deleted rows:', results.affectedRows);
+    console.log('Cleanup completed successfully');
   });
 }, {
+  scheduled: true,
+  timezone: "Europe/Bucharest"
 });
 
-console.log('Scripul pentru gestionarea facturilor a pornit.');
+console.log('Scripul pentru gestionarea datelor a pornit.');
 
 module.exports = {};
