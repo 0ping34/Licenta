@@ -588,6 +588,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(filteredOperations.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(filteredOperations, 'Operations')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(filteredOperations, 'Operations')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No logged operations matching the filters.</p>
@@ -639,6 +647,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(filteredEvents.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(filteredEvents, 'Events')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(filteredEvents, 'Events')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No current events matching the filters.</p>
@@ -697,6 +713,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(filteredMatchHistory.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(filteredMatchHistory, 'MatchHistory')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(filteredMatchHistory, 'MatchHistory')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No match history available.</p>
@@ -717,6 +741,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(adminUsers.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(adminUsers, 'adminUsers')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(adminUsers, 'adminUsers')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No admin users available.</p>
@@ -737,6 +769,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(employeeUsers.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(employeeUsers, 'employeeUsers')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(employeeUsers, 'employeeUsers')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No employee users available.</p>
@@ -790,6 +830,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(filteredBets.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(filteredBets, 'Bets')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(filteredBets, 'Bets')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No bets available.</p>
@@ -845,6 +893,14 @@ const ManagerPage = () => {
                   ))}
                 </ul>
                 {renderPagination(filteredInvoices.length)}
+                <div className="export-buttons">
+                <button className="export-button" onClick={() => exportToPDF(filteredInvoices, 'Invoices')}>Export to PDF</button>
+                <button className="export-button" onClick={() => exportToExcel(filteredInvoices, 'Invoices')}>Export to Excel</button>
+                <label className="export-button">
+                  Import from Excel
+                  <input type="file" className="file-input" accept=".xlsx, .xls" onChange={(e) => handleFileUpload(e, setMatchHistory)} />
+                </label>
+              </div>
               </>
             ) : (
               <p>No invoices available.</p>

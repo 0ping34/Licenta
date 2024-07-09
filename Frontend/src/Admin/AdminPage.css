@@ -32,6 +32,12 @@ html, body {
   color: #fffffd;
 }
 
+.admin-page h3 {
+  color: #000000;
+}
+.admin-page h4 {
+  color: #000000;
+}
 /* Create event form */
 .create-event-form {
   width: 100%;

@@ -5,7 +5,6 @@ import './AdminPage.css';
 import moment from 'moment';
 
 const AdminPage = () => {
-  // State variables to manage the component state
   const [events, setEvents] = useState([]);
   const [eventType, setEventType] = useState('');
   const [teamOne, setTeamOne] = useState('');
@@ -24,7 +23,6 @@ const AdminPage = () => {
   const navigate = useNavigate();
   const username = localStorage.getItem('username') || 'Admin';
 
-  // Fetch events when the component mounts
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {
@@ -38,7 +36,6 @@ const AdminPage = () => {
     }
   }, [navigate]);
 
-  // Update bet categories based on the selected event type
   useEffect(() => {
     switch (eventType) {
       case 'Fotbal':
@@ -56,18 +53,34 @@ const AdminPage = () => {
     }
   }, [eventType]);
 
-  // Add a new category with default options
+  useEffect(() => {
+    if (editingEvent) {
+      switch (editingEvent.Tip_Eveniment) {
+        case 'Fotbal':
+          setBetCategories(['Rezultat Final', 'Sansa Dubla', 'Total Goluri']);
+          break;
+        case 'Tenis':
+          setBetCategories(['Castigator Meci', 'Set 3 Total Game-uri', 'Total Game-uri']);
+          break;
+        case 'Baschet':
+          setBetCategories(['Rezultat Final', 'Handicap Puncte', 'Total Puncte']);
+          break;
+        default:
+          setBetCategories([]);
+          break;
+      }
+    }
+  }, [editingEvent]);
+
   const handleAddCategory = () => {
     setCategories([...categories, { id: Date.now(), category: '', options: [{ id: Date.now(), option: '', odds: '' }] }]);
   };
 
-  // Remove a category by its index
   const handleRemoveCategory = (index) => {
     const updatedCategories = categories.filter((_, catIndex) => catIndex !== index);
     setCategories(updatedCategories);
   };
 
-  // Add a new option to a specific category
   const handleAddOption = (catIndex) => {
     const category = categories[catIndex].category;
     if (category === 'Rezultat Final' && eventType === 'Fotbal' && categories[catIndex].options.length >= 3) {
@@ -92,28 +105,24 @@ const AdminPage = () => {
     setCategories(updatedCategories);
   };
 
-  // Remove an option from a specific category
   const handleRemoveOption = (catIndex, optIndex) => {
     const updatedCategories = [...categories];
     updatedCategories[catIndex].options = updatedCategories[catIndex].options.filter((_, index) => index !== optIndex);
     setCategories(updatedCategories);
   };
 
-  // Update the category of a specific index
   const handleCategoryChange = (index, value) => {
     const updatedCategories = [...categories];
     updatedCategories[index].category = value;
     setCategories(updatedCategories);
   };
 
-  // Update the option or odds of a specific option in a category
   const handleOptionChange = (catIndex, optIndex, field, value) => {
     const updatedCategories = [...categories];
     updatedCategories[catIndex].options[optIndex][field] = value;
     setCategories(updatedCategories);
   };
 
-  // Select random winning options for each category
   const selectWinningOptions = (categories) => {
     const options = categories.reduce((obj, item) => {
       if (item.category) {
@@ -140,7 +149,6 @@ const AdminPage = () => {
     return winningOptions;
   };
 
-  // Handle event creation
   const handleCreateEvent = () => {
     if (!eventType || !teamOne || !teamTwo || !eventDate || !location) {
       alert('Toate câmpurile sunt obligatorii!');
@@ -151,9 +159,6 @@ const AdminPage = () => {
   
     const selectedDate = moment(eventDate);
     const currentDate = moment();
-  
-    console.log('Selected Date:', selectedDate.format());
-    console.log('Current Date:', currentDate.format());
   
     const options = categories.reduce((obj, item) => {
       if (item.category) {
@@ -222,7 +227,6 @@ const AdminPage = () => {
       });
   };
   
-  // Handle event update
   const handleUpdateEvent = (id) => {
     if (!editingEvent) return;
   
@@ -283,7 +287,6 @@ const AdminPage = () => {
       .catch(error => console.error('Error updating event:', error));
   };
 
-  // Start editing an event
   const startEditingEvent = (event) => {
     const parsedCategories = Object.entries(JSON.parse(event.Optiuni_Pariuri || '{}').cote || {}).map(([category, options]) => ({
       id: Date.now(),
@@ -296,7 +299,6 @@ const AdminPage = () => {
     });
   };
 
-  // Handle changes to the editing categories and options
   const handleEditCategoryChange = (catIndex, value) => {
     const updatedCategories = [...editingEvent.categories];
     updatedCategories[catIndex].category = value;
@@ -321,19 +323,19 @@ const AdminPage = () => {
 
   const handleAddEditOption = (catIndex) => {
     const category = editingEvent.categories[catIndex].category;
-    if (category === 'Rezultat Final' && eventType === 'Fotbal' && editingEvent.categories[catIndex].options.length >= 3) {
+    if (category === 'Rezultat Final' && editingEvent.Tip_Eveniment === 'Fotbal' && editingEvent.categories[catIndex].options.length >= 3) {
       alert('Maximum 3 options are allowed for Rezultat Final in Fotbal.');
       return;
     }
-    if (category === 'Sansa Dubla' && eventType === 'Fotbal' && editingEvent.categories[catIndex].options.length >= 3) {
+    if (category === 'Sansa Dubla' && editingEvent.Tip_Eveniment === 'Fotbal' && editingEvent.categories[catIndex].options.length >= 3) {
       alert('Maximum 3 options are allowed for Sansa Dubla in Fotbal.');
       return;
     }
-    if (category === 'Castigator Meci' && eventType === 'Tenis' && editingEvent.categories[catIndex].options.length >= 2) {
+    if (category === 'Castigator Meci' && editingEvent.Tip_Eveniment === 'Tenis' && editingEvent.categories[catIndex].options.length >= 2) {
       alert('Maximum 2 options are allowed for Castigator Meci in Tenis.');
       return;
     }
-    if (category === 'Rezultat Final' && eventType === 'Baschet' && editingEvent.categories[catIndex].options.length >= 3) {
+    if (category === 'Rezultat Final' && editingEvent.Tip_Eveniment === 'Baschet' && editingEvent.categories[catIndex].options.length >= 3) {
       alert('Maximum 3 options are allowed for Rezultat Final in Baschet.');
       return;
     }
@@ -349,7 +351,6 @@ const AdminPage = () => {
     setEditingEvent({ ...editingEvent, categories: updatedCategories });
   };
 
-  // Render betting options
   const renderBettingOptions = (parsedOptions) => {
     return Object.entries(parsedOptions.cote).map(([category, options]) => (
       <div key={category}>
@@ -363,7 +364,6 @@ const AdminPage = () => {
     ));
   };
 
-  // Handle event deletion
   const handleDeleteEvent = (id) => {
     axios.delete(`/events/${id}`)
       .then(() => {
@@ -380,7 +380,6 @@ const AdminPage = () => {
       .catch(error => console.error('Error deleting event:', error));
   };
   
-  // Filter events based on selected criteria
   const filterEvents = () => {
     return events.filter(event => {
       const matchesType = filterType ? event.Tip_Eveniment === filterType : true;
@@ -393,9 +392,9 @@ const AdminPage = () => {
   return (
     <div className="admin-page">
       <div className="button-container">
-      <button className="back-button" onClick={() => { navigate('/'); window.location.reload(false); }}>Back</button>
-      <Link to="/istoric" className="historical-link">Mergi la Istoric Meciuri</Link>
-       </div>
+        <button className="back-button" onClick={() => { navigate('/'); window.location.reload(false); }}>Back</button>
+        <Link to="/istoric" className="historical-link">Mergi la Istoric Meciuri</Link>
+      </div>
 
       <h1>Bine ai venit, {username}!</h1>
       <h2>Gestionare Evenimente Sportive</h2>
