@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gazdă: 127.0.0.1
--- Timp de generare: iun. 28, 2024 la 08:54 PM
+-- Timp de generare: iul. 16, 2024 la 04:36 PM
 -- Versiune server: 10.4.32-MariaDB
 -- Versiune PHP: 8.2.12
 
@@ -90,11 +90,11 @@ CREATE TABLE `counter` (
 --
 
 INSERT INTO `counter` (`Indexuri`, `Counter`, `Currency`, `ID_Utilizator`) VALUES
-(26, 0, 'RON', 587537221),
-(27, 0, 'RON', 732474291),
-(29, 0, 'RON', 862912367),
+(26, 200, 'RON', 587537221),
+(29, 600, 'RON', 862912367),
 (31, 0, 'RON', 885844800),
-(34, 0, 'RON', 868377000);
+(46, 10200, 'RON', 394324337),
+(47, 0, 'RON', 477055056);
 
 -- --------------------------------------------------------
 
@@ -117,7 +117,12 @@ CREATE TABLE `eveniment_sportiv` (
 --
 
 INSERT INTO `eveniment_sportiv` (`ID_Eveniment`, `Tip_Eveniment`, `Echipa_unu`, `Echipa_doi`, `Data_Eveniment`, `Locatie`, `Optiuni_Pariuri`) VALUES
-(189, 'Fotbal', 'A', 'B', '2024-07-07 18:56:00', 'C', '{\"cote\":{\"Rezultat Final\":{\"B\":2}}}');
+(193, 'Fotbal', 'FC Barcelona', 'Real Madrid', '2024-08-15 18:30:00', 'Camp Nou, Barcelona', '{\"cote\":{\"Rezultat Final\":{\"FC Barcelona\":2.8,\"Egal\":2.3,\"Real Madrid\":2},\"Sansa Dubla\":{\"12\":1.2,\"1X\":1.4,\"X2\":1.5},\"Total Goluri\":{\"Peste 2.5\":1.9,\"Sub 2.5\":1.8}}}'),
+(194, 'Fotbal', ' Manchester United', 'Liverpool FC', '2024-09-10 16:00:00', 'Old Trafford, Manchester', '{\"cote\":{\"Rezultat Final\":{\"Manchester United\":2.7,\"Egal\":3.2,\"Liverpool FC\":2.5},\"Sansa Dubla\":{\"12\":1.25,\"1X\":1.45,\"X2\":1.5},\"Total Goluri\":{\"Peste 2.5\":1.85,\"Sub 2.5\":1.95}}}'),
+(195, 'Tenis', 'Novak Djokovic', 'Rafael Nadal', '2024-07-20 14:00:00', 'Wimbledon, Londra', '{\"cote\":{\"Castigator Meci\":{\"Novak Djokovic\":1.8,\"Rafael Nadal\":2},\"Set 3 Total Game-uri\":{\"Peste 10.5\":1.75,\"Sub 10.5\":2},\"Total Game-uri\":{\"Peste 40.5\":1.9,\"Sub 40.5\":1.85}}}'),
+(196, 'Baschet', 'Los Angeles Lakers', 'Golden State Warriors', '2024-10-01 19:00:00', 'Staples Center, Los Angeles', '{\"cote\":{\"Rezultat Final\":{\"Los Angeles Lakers\":2,\"Golden State Warriors\":1.9},\"Handicap Puncte\":{\"Los Angeles Lakers +5.5\":1.85,\"Golden State Warriors -5.5\":1.85},\"Total Puncte\":{\"Peste 210.5\":1.95,\"Sub 210.5\":1.85}}}'),
+(197, 'Baschet', 'Chicago Bulls', 'Miami Heat', '2024-11-15 18:30:00', 'Staples Center, Los Angeles', '{\"cote\":{\"Rezultat Final\":{\"Chicago Bulls\":2.2,\"Miami Heat\":1.75},\"Handicap Puncte\":{\"Chicago Bulls +4.5\":1.8,\"Miami Heat -4.5\":1.9},\"Total Puncte\":{\"Peste 200.5\":1.9,\"Sub 200.5\":1.9}}}'),
+(198, 'Fotbal', 'Chelsea FC', 'Arsenal FC', '2024-08-20 18:00:00', 'Stamford Bridge, Londra', '{\"cote\":{\"Rezultat Final\":{\"Chelsea FC\":2.3,\"Egal\":3.4,\"Arsenal FC\":3},\"Sansa Dubla\":{\"12\":1.25,\"1X\":1.35,\"X2\":1.55}}}');
 
 -- --------------------------------------------------------
 
@@ -141,11 +146,24 @@ CREATE TABLE `facturare` (
 --
 
 INSERT INTO `facturare` (`ID_Factura`, `Nume_Facturare`, `Email_Factura`, `Adresa_Facturare`, `Oras_Facturare`, `Cod_Postal`, `Data_Facturare`, `ID_Utilizator`) VALUES
+(15327894, ' John Doe', 'sb-gphbu29958700@personal.example.com', 'Galati', 'Galati', 80008, '2024-07-16 13:32:43', 862912367),
+(41010333, ' John Doe', 'a@a.com', 'Galati', 'Galati', 80008, '2024-07-16 13:42:26', 862912367),
+(45781765, ' John Doe', 'sb-gphbu29958700@personal.example.com', 'Galati', 'Galati', 80008, '2024-07-16 13:19:32', 862912367),
 (127537535, 'A A', 'aaa@a.com', 'Galati', 'Galati', 80008, '2024-06-28 09:23:55', 862912367),
 (178416142, 'A A', 'aaa@a.com', 'Galati', 'Galati', 80008, '2024-06-28 11:27:32', 862912367),
 (234881897, 'A A', 'aaa@a.com', 'Galati', 'Galati', 80008, '2024-06-27 19:26:41', 862912367),
+(296154600, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-16 13:18:27', 394324337),
+(326152072, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-16 13:45:13', 394324337),
+(381990553, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-16 14:09:06', 587537221),
+(387631337, 'A A', 'a@a.com', 'Galati', 'Galati', 80008, '2024-07-02 17:38:20', 862912367),
+(409959011, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-02 17:36:34', 394324337),
 (476033366, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-06-28 17:38:39', 587537221),
-(742186816, 'A A', 'aaa@a.com', 'Galati', 'Galati', 80008, '2024-06-27 19:40:13', 862912367);
+(528217937, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-16 13:36:45', 394324337),
+(550545641, ' John Doe', 'a@a.com', 'Galati', 'Galati', 80008, '2024-07-16 13:46:52', 862912367),
+(742186816, 'A A', 'aaa@a.com', 'Galati', 'Galati', 80008, '2024-06-27 19:40:13', 862912367),
+(848712693, ' John Doe', 'sb-gphbu29958700@personal.example.com', 'Galati', 'Galati', 80008, '2024-07-16 13:37:57', 862912367),
+(864495006, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-16 13:46:03', 394324337),
+(936352408, 'John Doe', 'sb-gphbu29958700@personal.example.com', '25 Lipscani Street', 'Bucharest', 12266, '2024-07-16 13:30:55', 394324337);
 
 -- --------------------------------------------------------
 
@@ -169,7 +187,12 @@ CREATE TABLE `meciuri_istoric` (
 --
 
 INSERT INTO `meciuri_istoric` (`ID_Meci2`, `Tip_Eveniment`, `Echipa_unu`, `Echipa_doi`, `Data_Eveniment`, `Locatie`, `Optiuni_Castigatoare`, `ID_Eveniment`) VALUES
-(91, 'Fotbal', 'A', 'B', '2024-06-29 15:02:00', 'C', '[\"Rezultat Final\",\"{\\\"A\\\":2\"]', 185);
+(93, 'Fotbal', 'Juventus', 'AC Milan', '2024-06-05 20:00:00', 'Allianz Stadium, Torino', '{\"Rezultat Final\":{\"AC Milan\":2.9},\"Total Goluri\":{\"Peste 2.5\":1.95}}', 199),
+(96, 'Tenis', 'Simona Halep', 'Ashleigh Barty', '2024-06-10 13:00:00', 'Roland Garros, Paris', '{\"Castigator Meci\":{\"Simona Halep\":2},\"Set 3 Total Game-uri\":{\"Peste 10.5\":1.8}}', 204),
+(97, 'Baschet', 'A', 'B', '2024-05-18 14:00:00', 'C', '{\"Rezultat Final\":{\"A\":2}}', 205),
+(98, 'Tenis', 'Roger Federer', 'Andy Murray', '2024-03-15 16:00:00', 'Australian Open, Melbourne', '{\"Castigator Meci\":{\"Roger Federer\":1.9},\"Total Game-uri\":{\"Sub 38.5\":1.9}}', 201),
+(99, 'Tenis', ' Serena Williams', 'Naomi Osaka', '2024-06-02 12:00:00', 'US Open, New York', '{\"Castigator Meci\":{\"Naomi Osaka\":1.75},\"Set 3 Total Game-uri\":{\"Sub 9.5\":2},\"Total Game-uri\":{\"Sub 36.5\":1.9}}', 200),
+(100, 'Fotbal', 'A', 'B', '2024-06-02 14:07:00', 'V', '{\"Rezultat Final\":{\"A\":2}}', 210);
 
 -- --------------------------------------------------------
 
@@ -200,7 +223,53 @@ INSERT INTO `operati` (`ID_Operatie`, `Nume`, `Pozitie`, `Operatie`, `Tabela`, `
 (7, 'aaa', 'angajat', 'create', 'pariu', '2024-06-28 14:27:32'),
 (8, 'testuser', 'admin', 'create', 'utilizatori', '2024-06-28 16:22:20'),
 (9, 'testuser', 'admin', 'create', 'utilizatori', '2024-06-28 16:29:42'),
-(10, 'testuser', 'admin', 'create', 'utilizatori', '2024-06-28 16:34:40');
+(10, 'testuser', 'admin', 'create', 'utilizatori', '2024-06-28 16:34:40'),
+(11, 'a', 'admin', 'delete', 'eveniment_sportiv', '2024-07-02 20:24:56'),
+(12, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-02 20:29:54'),
+(13, 'a', 'admin', 'delete', 'eveniment_sportiv', '2024-07-02 20:30:14'),
+(14, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-02 20:30:57'),
+(15, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-02 20:31:05'),
+(16, 'aaa', 'angajat', 'create', 'pariu', '2024-07-02 20:38:20'),
+(17, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-02 20:39:49'),
+(18, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-02 20:57:59'),
+(19, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:22:04'),
+(20, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 13:22:47'),
+(21, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:25:39'),
+(22, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:27:49'),
+(23, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:30:53'),
+(24, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:33:05'),
+(25, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 13:34:28'),
+(26, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:39:32'),
+(27, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:41:34'),
+(28, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 13:42:39'),
+(29, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:45:49'),
+(30, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:47:33'),
+(31, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:48:29'),
+(32, 'a', 'admin', 'delete', 'meciuri_istoric', '2024-07-16 13:48:46'),
+(33, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:49:45'),
+(34, 'a', 'admin', 'delete', 'meciuri_istoric', '2024-07-16 13:49:59'),
+(35, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 13:51:43'),
+(36, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 13:56:52'),
+(37, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 14:00:43'),
+(38, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 14:13:19'),
+(39, 'aaa', 'angajat', 'create', 'pariu', '2024-07-16 16:19:32'),
+(40, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 16:22:40'),
+(41, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 16:22:59'),
+(42, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 16:23:19'),
+(43, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 16:26:44'),
+(44, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 16:27:20'),
+(45, 'aaa', 'angajat', 'create', 'pariu', '2024-07-16 16:32:43'),
+(46, 'aaa', 'angajat', 'create', 'pariu', '2024-07-16 16:37:57'),
+(47, 'aaa', 'angajat', 'create', 'pariu', '2024-07-16 16:42:26'),
+(48, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 16:42:56'),
+(49, 'aaa', 'angajat', 'create', 'pariu', '2024-07-16 16:46:52'),
+(50, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 16:47:41'),
+(51, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 16:47:53'),
+(52, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 16:57:26'),
+(53, 'a', 'admin', 'create', 'eveniment_sportiv', '2024-07-16 17:07:35'),
+(54, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 17:07:52'),
+(55, 'a', 'admin', 'update', 'eveniment_sportiv', '2024-07-16 17:09:18'),
+(56, 'testuser', 'admin', 'create', 'utilizatori', '2024-07-16 17:34:02');
 
 -- --------------------------------------------------------
 
@@ -227,8 +296,10 @@ CREATE TABLE `pariu` (
 --
 
 INSERT INTO `pariu` (`ID_Pariu`, `Descriere`, `Categorie`, `Cheia_Selectata`, `Cota`, `Suma`, `Moneda`, `Colectat`, `Combinat`, `ID_Eveniment`, `ID_Tranzactie`) VALUES
-(652992836, 'A vs B', 'Rezultat Final', 'A', '2', 100, 'RON', 1, 0, 185, 403117421),
-(686294057, 'A vs B', 'Rezultat Final', 'A', '2', 100, 'RON', 0, 0, 185, 363397223);
+(243847165, 'FC Barcelona vs Real Madrid', 'Rezultat Final', 'FC Barcelona', '2.8', 100, 'RON', 0, 0, 193, 942504357),
+(373960134, 'A vs B', 'Rezultat Final', 'A', '2', 100, 'RON', 1, 0, 210, 768165391),
+(492068858, 'FC Barcelona vs Real Madrid', 'Rezultat Final', 'FC Barcelona', '2.8', 100, 'RON', 0, 0, 193, 383019873),
+(758871954, 'A vs B', 'Rezultat Final', 'B', '3', 100, 'RON', 0, 0, 210, 768165391);
 
 -- --------------------------------------------------------
 
@@ -250,8 +321,9 @@ CREATE TABLE `tranzactie` (
 --
 
 INSERT INTO `tranzactie` (`ID_Tranzactie`, `Data_Tranzactie`, `Suma_Totala`, `Currency`, `ID_Utilizator`, `Capture_ID`) VALUES
-(363397223, '2024-06-28 12:23:55', 100, 'RON', 862912367, NULL),
-(403117421, '2024-06-28 14:27:32', 100, 'RON', 862912367, NULL);
+(383019873, '2024-07-16 16:46:03', 100, 'RON', 394324337, '4DN06578GR977172J'),
+(768165391, '2024-07-16 17:09:06', 200, 'RON', 587537221, '91M554389V973392G'),
+(942504357, '2024-07-16 16:36:45', 100, 'RON', 394324337, '9JV39724UD4999610');
 
 -- --------------------------------------------------------
 
@@ -275,10 +347,10 @@ CREATE TABLE `utilizatori` (
 --
 
 INSERT INTO `utilizatori` (`ID_Utilizator`, `Nume_Utilizator`, `Parola_Hash`, `Email`, `Varsta`, `Pozitie`, `Data_Inregistrare`, `Confirmare`) VALUES
+(394324337, 'b', '$2b$10$FlHFD4YE90Qn5LDoBgX2CerK35r3VJ0x9FiYn2Fqy1iT1q1t1cmiu', 'b@b.com', 25, 'utilizator', '2024-07-02 20:24:15', 1),
+(477055056, 'testuser', '$2b$10$3PX0ky0NdR5Hw.JTiZzasOZAk1cw06hk/fdTMtMWgatsXPdVRtQ2C', 'testuser@example.com', 34, 'user', '2024-07-16 17:34:00', 0),
 (587537221, 'a', '$2b$10$cgU7es/cADEYesgoiVDKHOgpo7UWGmaiSPXBjZAfvzGudaqsm4Kji', 'a@a.com', 26, 'admin', '2024-06-27 20:51:49', 1),
-(732474291, 'aa', '$2b$10$LFAJ0IV/7DLuHOOvEAt.5.G29ehvm4h0X.Ah/3iAKndTRN/gb9zZ.', 'aa@a.com', 25, 'utilizator', '2024-06-27 20:56:42', 0),
 (862912367, 'aaa', '$2b$10$wkdyJ04JOvwYOa26WZpFG.8OXw6V/dkO1qPob1u4x5bzTJsWAToHm', 'aaa@a.com', 27, 'angajat', '2024-06-27 22:24:59', 1),
-(868377000, 'b', '$2b$10$1w8WJxawqcgQjGja/1ysOOtXgLBPl/6qL8bBamF37H/TpRVjbyto.', 'b@b.com', 29, 'utilizator', '2024-06-28 12:31:25', 0),
 (885844800, 'aaaa', '$2b$10$xGseRHFf46tecLATEsOovuB3/W1ZE.sJ.M5iTwPFfxgdbD73IRXVC', 'aaaa@a.com', 28, 'manager', '2024-06-28 12:14:48', 1);
 
 --
@@ -357,25 +429,25 @@ ALTER TABLE `coduri_rol`
 -- AUTO_INCREMENT pentru tabele `counter`
 --
 ALTER TABLE `counter`
-  MODIFY `Indexuri` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `Indexuri` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT pentru tabele `eveniment_sportiv`
 --
 ALTER TABLE `eveniment_sportiv`
-  MODIFY `ID_Eveniment` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=190;
+  MODIFY `ID_Eveniment` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=211;
 
 --
 -- AUTO_INCREMENT pentru tabele `meciuri_istoric`
 --
 ALTER TABLE `meciuri_istoric`
-  MODIFY `ID_Meci2` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `ID_Meci2` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT pentru tabele `operati`
 --
 ALTER TABLE `operati`
-  MODIFY `ID_Operatie` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID_Operatie` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- Constrângeri pentru tabele eliminate

@@ -389,6 +389,27 @@ const AdminPage = () => {
     });
   };
 
+  useEffect(() => {
+    if (filterType) {
+      switch (filterType) {
+        case 'Fotbal':
+          setBetCategories(['Rezultat Final', 'Sansa Dubla', 'Total Goluri']);
+          break;
+        case 'Tenis':
+          setBetCategories(['Castigator Meci', 'Set 3 Total Game-uri', 'Total Game-uri']);
+          break;
+        case 'Baschet':
+          setBetCategories(['Rezultat Final', 'Handicap Puncte', 'Total Puncte']);
+          break;
+        default:
+          setBetCategories([]);
+          break;
+      }
+    } else {
+      setBetCategories([]);
+    }
+  }, [filterType]);
+
   return (
     <div className="admin-page">
       <div className="button-container">
@@ -461,7 +482,7 @@ const AdminPage = () => {
             <option key={type} value={type}>{type}</option>
           ))}
         </select>
-        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="form-input">
+        <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="form-input" disabled={!filterType}>
           <option value="">Selectează Categoria</option>
           {betCategories.map(category => (
             <option key={category} value={category}>{category}</option>

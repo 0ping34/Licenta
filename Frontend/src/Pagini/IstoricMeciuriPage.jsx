@@ -82,20 +82,18 @@ function IstoricMeciuriPage() {
     }
   };
 
-  // Extract and display final result from match options
-  const extractRezultatFinal = (options) => {
+  // Extract and display all winning options from match options
+  const extractWinningOptions = (options) => {
     try {
       const parsedOptions = JSON.parse(options);
-      if (parsedOptions['Rezultat Final']) {
-        const result = parsedOptions['Rezultat Final'];
+      return Object.entries(parsedOptions).map(([category, result]) => {
         if (typeof result === 'object') {
           const [option, odds] = Object.entries(result)[0];
-          return `Rezultat Final: ${option} - Cota: ${odds}`;
+          return <p key={category}>{category}: {option} - Cota: {odds}</p>;
         } else {
-          return `Rezultat Final: ${result}`;
+          return <p key={category}>{category}: {result}</p>;
         }
-      }
-      return null;
+      });
     } catch (error) {
       console.error('Error parsing winning options:', error);
       return null;
@@ -181,7 +179,7 @@ function IstoricMeciuriPage() {
                 <p><strong>Tip Eveniment:</strong> {match.Tip_Eveniment}</p>
                 <p><strong>Locație:</strong> {match.Locatie}</p>
                 <p><strong>Opțiuni Câștigătoare:</strong></p>
-                <p><strong>{extractRezultatFinal(match.Optiuni_Castigatoare)}</strong></p>
+                <div>{extractWinningOptions(match.Optiuni_Castigatoare)}</div>
                 {userRole === 'admin' && (
                   <button className="delete-button" onClick={() => handleDeleteMatch(match.ID_Meci2)}>Delete</button>
                 )}

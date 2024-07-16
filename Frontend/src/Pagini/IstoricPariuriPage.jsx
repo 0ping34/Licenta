@@ -5,7 +5,6 @@ import moment from 'moment';
 import './IstoricPariuriPage.css';
 
 function IstoricPariuriPage() {
-  // State variables to manage the bet history, match history, current events, and various UI elements
   const location = useLocation();
   const [betHistory, setBetHistory] = useState([]);
   const [matchHistory, setMatchHistory] = useState([]);
@@ -22,31 +21,26 @@ function IstoricPariuriPage() {
   const role = localStorage.getItem('role'); // Get the user's role from localStorage
   const navigate = useNavigate();
 
-  // Fetch data when the component mounts
   useEffect(() => {
     if (username) {
-      // Fetch bet history for the user
       axios.get(`https://localhost:8081/users/${username}/bets`)
         .then(response => {
           setBetHistory(response.data);
         })
         .catch(error => console.error('Error fetching bet history:', error));
 
-      // Fetch match history
       axios.get('https://localhost:8081/match-history')
         .then(response => {
           setMatchHistory(response.data);
         })
         .catch(error => console.error('Error fetching match history:', error));
 
-      // Fetch current events
       axios.get('https://localhost:8081/events')
         .then(response => {
           setCurrentEvents(response.data);
         })
         .catch(error => console.error('Error fetching current events:', error));
 
-      // Fetch user's counter and currency
       axios.get(`https://localhost:8081/counter/${userId}`)
         .then(response => {
           setCounter(response.data.Counter);
@@ -56,7 +50,6 @@ function IstoricPariuriPage() {
     }
   }, [username, userId]);
 
-  // Function to update the counter
   const updateCounter = async () => {
     try {
       const response = await axios.get(`https://localhost:8081/counter/${userId}`);
@@ -68,7 +61,6 @@ function IstoricPariuriPage() {
     }
   };
 
-  // Function to handle payout of a bet
   const handlePayout = (bet) => {
     setProcessingPayout(true);
 
@@ -79,13 +71,14 @@ function IstoricPariuriPage() {
       betId: bet.ID_Pariu,
       userId: bet.ID_Utilizator,
       amount: payoutAmount,
-      currency: bet.Moneda
+      currency: bet.Moneda,
+      role // include role in the request
     })
     .then(response => {
       console.log('Payout successful:', response.data);
       alert('Payout successful');
       updateBetCollectionStatus(bet.ID_Pariu);
-      updateCounter();  // Update counter after successful payout
+      updateCounter();
     })
     .catch(error => {
       console.error('Error processing payout:', error.response ? error.response.data : error.message);
@@ -96,7 +89,6 @@ function IstoricPariuriPage() {
     });
   };
 
-  // Function to handle refund of a bet
   const handleRefund = (bet) => {
     setProcessingRefund(true);
 
@@ -106,7 +98,8 @@ function IstoricPariuriPage() {
       betId: bet.ID_Pariu,
       userId: bet.ID_Utilizator,
       amount: bet.Suma,
-      currency: bet.Moneda
+      currency: bet.Moneda,
+      role // include role in the request
     })
     .then(response => {
       console.log('Refund successful:', response.data);
@@ -124,7 +117,6 @@ function IstoricPariuriPage() {
     });
   };
 
-  // Function to handle deletion of a bet
   const handleDelete = (betId, transactionId) => {
     axios.delete(`https://localhost:8081/delete-bet/${betId}/${transactionId}`)
       .then(response => {
@@ -139,7 +131,6 @@ function IstoricPariuriPage() {
       });
   };
 
-  // Function to update the collection status of a bet
   const updateBetCollectionStatus = (betId) => {
     axios.patch(`https://localhost:8081/bets/${betId}/collect`)
       .then(response => {
@@ -156,7 +147,6 @@ function IstoricPariuriPage() {
       });
   };
 
-  // Function to check if a bet is a winning bet
   const isWinningBet = (bet) => {
     const match = matchHistory.find(match => {
       const winningOptions = JSON.parse(match.Optiuni_Castigatoare);
@@ -165,19 +155,16 @@ function IstoricPariuriPage() {
     return match !== undefined;
   };
 
-  // Function to check if a combined bet is a winning bet
   const isWinningCombinedBet = (betGroup) => {
     return betGroup.bets.every(bet => isWinningBet(bet));
   };
 
-  // Function to check if a match has already played
   const hasMatchPlayed = (bet) => {
     const match = matchHistory.find(match => match.ID_Eveniment === bet.ID_Eveniment) ||
                   currentEvents.find(event => event.ID_Eveniment === bet.ID_Eveniment);
     return match ? moment(match.Data_Eveniment).isBefore(moment()) : false;
   };
 
-  // Group bet history by transaction ID for combined bets
   const groupedBetHistory = betHistory.reduce((acc, bet) => {
     if (bet.Combinat === 1) {
       const transactionGroup = acc.find(group => group.ID_Tranzactie === bet.ID_Tranzactie && group.Combinat === 1);
@@ -192,7 +179,6 @@ function IstoricPariuriPage() {
     return acc;
   }, []);
 
-  // Filter bet history based on selected category and date range
   const filteredBetHistory = groupedBetHistory.filter(betGroup => {
     const betDate = new Date(betGroup.Data_Tranzactie);
     const isWithinDateRange = (!startDate || betDate >= new Date(startDate)) && (!endDate || betDate <= new Date(endDate));

@@ -76,6 +76,7 @@ body {
 .MainContainer {
   display: flex;
   flex: 1;
+  overflow-y: auto;
 }
 
 .MainPanel {

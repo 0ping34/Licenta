@@ -1041,7 +1041,7 @@ app.post('/withdraw', async (req, res) => {
 
 // Procesare retragere fără PayPal
 app.post('/withdraw2', async (req, res) => {
-  const { betId, userId, amount, currency } = req.body;
+  const { betId, userId, amount, currency,role,username } = req.body;
   const EXCHANGE_RATES = {
     RON: 1,
     EUR: 4.98,
@@ -1103,9 +1103,9 @@ app.post('/withdraw2', async (req, res) => {
             })
             .then(response => {
               console.log('Operation logged successfully:', response.data);
-            })
+           })
             .catch(error => {
-              console.error('Error logging operation:', error.response ? error.response.data : error.message);
+             console.error('Error logging operation:', error.response ? error.response.data : error.message);
             });
           }
 
@@ -1190,7 +1190,7 @@ app.post('/refund', async (req, res) => {
 
 // Procesare refund fără PayPal
 app.post('/refund2', async (req, res) => {
-  const { betId, userId, amount, currency } = req.body;
+  const { betId, userId, amount, currency,role,username} = req.body;
   const EXCHANGE_RATES = {
     RON: 1,
     EUR: 4.98,
@@ -1239,21 +1239,21 @@ app.post('/refund2', async (req, res) => {
         const refundDetails = `Bet ID: ${betId}, Amount: ${amount}, Currency: ${currency}`;
         sendRefundEmail(email, refundDetails);
 
-         // Log the operation if the user is an employee
-         if (role === 'angajat') {
-          axios.post('https://localhost:8081/log-operation', {
-            username,
-            role,
-            operation: 'refund',
-            table: 'pariu'
-          })
-          .then(response => {
-            console.log('Operation logged successfully:', response.data);
-          })
-          .catch(error => {
+          //Log the operation if the user is an employee
+           if (role === 'angajat') {
+            axios.post('https://localhost:8081/log-operation', {
+              username,
+              role,
+              operation: 'refund',
+              table: 'pariu'
+            })
+            .then(response => {
+              console.log('Operation logged successfully:', response.data);
+            })
+            .catch(error => {
             console.error('Error logging operation:', error.response ? error.response.data : error.message);
-          });
-        }
+            });
+          }
 
         res.status(200).json({ status: 'success', message: 'Refund and deletion successful' });
       });
