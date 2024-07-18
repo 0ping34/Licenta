@@ -1,0 +1,20 @@
+npm start-start server backend
+npm run dev-start frontend
+npm run test-rulararea planurilor de teste pentru backend si frontend
+
+Date de conectare la baza de date
+host: 'localhost',
+    user: 'ADMIN',
+    password: '123456789',
+    database: 'casa_de_pariuri'
+
+Date cont de testare paypal
+sb-gphbu29958700@personal.example.com
+ok_c3>I
+
+Date conturi
+a@a.com- a - administrator
+b@b.com- b - utilizator
+aaa@a.com- aaa - angajat
+aaaa@a.com- a - manager
+aa@a.com- aa - utilizator neconfirmat
